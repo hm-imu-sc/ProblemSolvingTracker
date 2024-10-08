@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+option csharp_namespace = "ProblemSolvingTracker";
+import "google/api/annotations.proto";
+
+package tag;
+
+service TagServices {
+    rpc CreateTag(CreateTagRequest) returns (CreateTagResponse) {
+        option (google.api.http) = {
+            post: "/create_tag",
+            body: "*"
+        };
+    }
+    
+    rpc GetTag(GetTagRequest) returns (GetTagResponse) {}
+    
+    rpc GetAllTags(GetAllTagsRequest) returns (GetAllTagsResponse) {
+        option (google.api.http) = {
+            get: "/get_all_tags"
+        };
+    }
+    
+    rpc UpdateTagName(UpdateTagNameRequest) returns (UpdateTagNameResponse) {}
+    
+    rpc DeleteTag(DeleteTagRequest) returns (DeleteTagResponse) {}
+} 
+
+message GeneralResponse {
+    bool is_success = 1;
+    string message = 2;
+}
+
+message TagItem {
+    int32 id = 1;
+    string name = 2;
+}
+
+message CreateTagRequest {
+    string name = 1;
+}
+
+message CreateTagResponse {
+    int32 id = 1;
+    GeneralResponse general_response = 2;
+}
+
+message GetTagRequest {
+    int32 id = 1;
+}
+
+message GetTagResponse {
+    TagItem tag = 1;
+    GeneralResponse general_response = 2;
+}
+
+message GetAllTagsRequest {
+
+}
+
+message GetAllTagsResponse {
+    repeated TagItem tags = 1;
+    GeneralResponse general_response = 2;
+}
+
+message UpdateTagNameRequest {
+    TagItem tag = 1;
+}
+
+message UpdateTagNameResponse {
+    GeneralResponse general_response = 1;
+}
+
+message DeleteTagRequest {
+    int32 id = 1;
+}
+
+message DeleteTagResponse {
+    GeneralResponse general_response = 1;
+}
+
+
+// protoc -I="C:\Users\HM Imu SC\Desktop\Projects\ProblemSolvingTracker\ProblemSolvingTracker\Protos" tag.proto --js_out=import_style=commonjs:"C:\Users\HM Imu SC\Desktop\Projects\React-JS\references-app\src\grpc\TagService" --grpc-web_out=import_style=commonjs,mode=grpcwebtext:"C:\Users\HM Imu SC\Desktop\Projects\React-JS\references-app\src\grpc\TagService"
