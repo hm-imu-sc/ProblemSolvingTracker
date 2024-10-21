@@ -21,9 +21,18 @@ service TagServices {
         };
     }
     
-    rpc UpdateTagName(UpdateTagNameRequest) returns (UpdateTagNameResponse) {}
+    rpc UpdateTag(UpdateTagRequest) returns (UpdateTagResponse) {
+        option (google.api.http) = {
+            put: "/update_tag",
+            body: "*"
+        };
+    }
     
-    rpc DeleteTag(DeleteTagRequest) returns (DeleteTagResponse) {}
+    rpc DeleteTag(DeleteTagRequest) returns (DeleteTagResponse) {
+        option (google.api.http) = {
+            delete: "/delete_tag/{id}"
+        };
+    }
 } 
 
 message GeneralResponse {
@@ -32,7 +41,7 @@ message GeneralResponse {
 }
 
 message TagItem {
-    int32 id = 1;
+    int32 id = 1;   
     string name = 2;
 }
 
@@ -63,11 +72,11 @@ message GetAllTagsResponse {
     GeneralResponse general_response = 2;
 }
 
-message UpdateTagNameRequest {
+message UpdateTagRequest {
     TagItem tag = 1;
 }
 
-message UpdateTagNameResponse {
+message UpdateTagResponse {
     GeneralResponse general_response = 1;
 }
 

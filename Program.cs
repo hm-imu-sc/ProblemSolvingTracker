@@ -2,8 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using ProblemSolvingTracker.DataManager;
 using ProblemSolvingTracker.Services;
 
+var databaseName = "ProblemSolvingLog.db";
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<MyDbContext>(opt => opt.UseSqlite("Data Source=ProblemSolvingLog.db"));
+builder.Services.AddDbContext<MyDbContext>(opt => opt.UseSqlite($"Data Source={databaseName}"));
 builder.Services.AddGrpc().AddJsonTranscoding();
 builder.Services.AddCors(options =>
 {
