@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProblemSolvingTracker.DataManager;
 
@@ -10,9 +11,11 @@ using ProblemSolvingTracker.DataManager;
 namespace ProblemSolvingTracker.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    partial class MyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241024094507_add_study_materials_column")]
+    partial class add_study_materials_column
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
@@ -37,28 +40,6 @@ namespace ProblemSolvingTracker.Migrations
                     b.HasIndex("TopicId");
 
                     b.ToTable("Counts");
-                });
-
-            modelBuilder.Entity("ProblemSolvingTracker.Models.StudyMaterial", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Title")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("TopicId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Url")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TopicId");
-
-                    b.ToTable("StudyMaterials");
                 });
 
             modelBuilder.Entity("ProblemSolvingTracker.Models.Tag", b =>
@@ -89,6 +70,10 @@ namespace ProblemSolvingTracker.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("StudyMaterials")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.ToTable("Topics");
@@ -103,13 +88,6 @@ namespace ProblemSolvingTracker.Migrations
                     b.Navigation("Topic");
                 });
 
-            modelBuilder.Entity("ProblemSolvingTracker.Models.StudyMaterial", b =>
-                {
-                    b.HasOne("ProblemSolvingTracker.Models.Topic", null)
-                        .WithMany("StudyMaterials")
-                        .HasForeignKey("TopicId");
-                });
-
             modelBuilder.Entity("ProblemSolvingTracker.Models.Tag", b =>
                 {
                     b.HasOne("ProblemSolvingTracker.Models.Topic", null)
@@ -119,8 +97,6 @@ namespace ProblemSolvingTracker.Migrations
 
             modelBuilder.Entity("ProblemSolvingTracker.Models.Topic", b =>
                 {
-                    b.Navigation("StudyMaterials");
-
                     b.Navigation("Tags");
                 });
 #pragma warning restore 612, 618

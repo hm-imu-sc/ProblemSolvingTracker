@@ -1,0 +1,86 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "ProblemSolvingTracker";
+import "google/api/annotations.proto";
+import "protos/common.proto";
+
+package study_material;
+
+service StudyMaterialServices {
+    rpc CreateStudyMaterial(CreateStudyMaterialRequest) returns (CreateStudyMaterialResponse) {
+        option (google.api.http) = {
+            post: "/create_study_material",
+            body: "*"
+        };
+    }
+    
+    rpc GetStudyMaterial(GetStudyMaterialRequest) returns (GetStudyMaterialResponse) {}
+    
+    rpc GetAllStudyMaterials(GetAllStudyMaterialsRequest) returns (GetAllStudyMaterialsResponse) {
+        option (google.api.http) = {
+            get: "/get_all_study_materials"
+        };
+    }
+    
+    rpc UpdateStudyMaterial(UpdateStudyMaterialRequest) returns (UpdateStudyMaterialResponse) {
+        option (google.api.http) = {
+            put: "/update_study_material",
+            body: "*"
+        };
+    }
+    
+    rpc DeleteStudyMaterial(DeleteStudyMaterialRequest) returns (DeleteStudyMaterialResponse) {
+        option (google.api.http) = {
+            delete: "/delete_study_material/{id}"
+        };
+    }
+} 
+
+message StudyMaterialItem {
+    int32 id = 1;   
+    string title = 2;
+    string url = 3;
+}
+
+message CreateStudyMaterialRequest {
+    StudyMaterialItem study_material = 1;
+}
+
+message CreateStudyMaterialResponse {
+    int32 id = 1;
+    common.GeneralResponse general_response = 2;
+}
+
+message GetStudyMaterialRequest {
+    int32 id = 1;
+}
+
+message GetStudyMaterialResponse {
+    StudyMaterialItem study_material = 1;
+    common.GeneralResponse general_response = 2;
+}
+
+message GetAllStudyMaterialsRequest {
+
+}
+
+message GetAllStudyMaterialsResponse {
+    repeated StudyMaterialItem study_materials = 1;
+    common.GeneralResponse general_response = 2;
+}
+
+message UpdateStudyMaterialRequest {
+    StudyMaterialItem study_material = 1;
+}
+
+message UpdateStudyMaterialResponse {
+    common.GeneralResponse general_response = 1;
+}
+
+message DeleteStudyMaterialRequest {
+    int32 id = 1;
+}
+
+message DeleteStudyMaterialResponse {
+    common.GeneralResponse general_response = 1;
+}

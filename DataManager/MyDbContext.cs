@@ -11,8 +11,8 @@ namespace ProblemSolvingTracker.DataManager
         }
 
         public DbSet<Tag> Tags => Set<Tag>();
-        public DbSet<Difficulty> Difficulties => Set<Difficulty>();
         public DbSet<Topic> Topics => Set<Topic>();
         public DbSet<Count> Counts => Set<Count>();
+        public DbSet<StudyMaterial> StudyMaterials => Set<StudyMaterial>();
     }
 }
