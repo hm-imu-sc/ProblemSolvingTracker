@@ -1,8 +1,9 @@
-﻿namespace ProblemSolvingTracker.Models
+﻿using ManagerClasses;
+
+namespace ProblemSolvingTracker.Models
 {
-    public class Count
+    public class Count : Entity
     {
-        public int Id { get; set; }
         public DateTime Date { get; set; }
         public Topic? Topic { get; set; }
         public int SolveCount { get; set; }

@@ -1,8 +1,9 @@
-﻿namespace ProblemSolvingTracker.Models
+﻿using ManagerClasses;
+
+namespace ProblemSolvingTracker.Models
 {
-    public class StudyMaterial
+    public class StudyMaterial : Entity
     {
-        public int Id { get; set; }
         public string? Title { get; set; }
         public string? Url { get; set; }
     }

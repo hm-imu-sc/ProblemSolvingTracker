@@ -36,7 +36,7 @@ namespace ProblemSolvingTracker.Migrations
 
                     b.HasIndex("TopicId");
 
-                    b.ToTable("Counts");
+                    b.ToTable("Counts", (string)null);
                 });
 
             modelBuilder.Entity("ProblemSolvingTracker.Models.StudyMaterial", b =>
@@ -58,7 +58,7 @@ namespace ProblemSolvingTracker.Migrations
 
                     b.HasIndex("TopicId");
 
-                    b.ToTable("StudyMaterials");
+                    b.ToTable("StudyMaterials", (string)null);
                 });
 
             modelBuilder.Entity("ProblemSolvingTracker.Models.Tag", b =>
@@ -77,7 +77,7 @@ namespace ProblemSolvingTracker.Migrations
 
                     b.HasIndex("TopicId");
 
-                    b.ToTable("Tags");
+                    b.ToTable("Tags", (string)null);
                 });
 
             modelBuilder.Entity("ProblemSolvingTracker.Models.Topic", b =>
@@ -91,7 +91,7 @@ namespace ProblemSolvingTracker.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Topics");
+                    b.ToTable("Topics", (string)null);
                 });
 
             modelBuilder.Entity("ProblemSolvingTracker.Models.Count", b =>

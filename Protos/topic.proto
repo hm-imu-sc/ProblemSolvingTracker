@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+option csharp_namespace = "ProblemSolvingTracker";
+import "google/api/annotations.proto";
+import "protos/common.proto";
+import "protos/tag.proto";
+import "protos/study_material.proto";
+
+package topic;
+
+service TopicServices {
+    rpc CreateTopic(CreateTopicRequest) returns (CreateTopicResponse) {
+        option (google.api.http) = {
+            post: "/create_topic",
+            body: "*"
+        };
+    }
+    
+    rpc GetTopic(GetTopicRequest) returns (GetTopicResponse) {}
+    
+    rpc GetAllTopics(GetAllTopicsRequest) returns (GetAllTopicsResponse) {
+        option (google.api.http) = {
+            get: "/get_all_topics"
+        };
+    }
+    
+    rpc UpdateTopic(UpdateTopicRequest) returns (UpdateTopicResponse) {
+        option (google.api.http) = {
+            put: "/update_topic",
+            body: "*"
+        };
+    }
+    
+    rpc DeleteTopic(DeleteTopicRequest) returns (DeleteTopicResponse) {
+        option (google.api.http) = {
+            delete: "/delete_topic/{id}"
+        };
+    }
+} 
+
+message TopicItem {
+    int32 id = 1;   
+    string name = 2;
+    repeated study_material.StudyMaterialItem study_materials = 3;
+    repeated tag.TagItem tags = 4;
+}
+
+message CreateTopicRequest {
+    TopicItem topic = 1;
+}
+
+message CreateTopicResponse {
+    int32 id = 1;
+    common.GeneralResponse general_response = 2;
+}
+
+message GetTopicRequest {
+    int32 id = 1;
+}
+
+message GetTopicResponse {
+    TopicItem topic = 1;
+    common.GeneralResponse general_response = 2;
+}
+
+message GetAllTopicsRequest {
+
+}
+
+message GetAllTopicsResponse {
+    repeated TopicItem topics = 1;
+    common.GeneralResponse general_response = 2;
+}
+
+message UpdateTopicRequest {
+    TopicItem topic = 1;
+}
+
+message UpdateTopicResponse {
+    common.GeneralResponse general_response = 1;
+}
+
+message DeleteTopicRequest {
+    int32 id = 1;
+}
+
+message DeleteTopicResponse {
+    common.GeneralResponse general_response = 1;
+}

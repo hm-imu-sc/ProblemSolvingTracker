@@ -1,8 +1,9 @@
-﻿namespace ProblemSolvingTracker.Models
+﻿using ManagerClasses;
+
+namespace ProblemSolvingTracker.Models
 {
-    public class Topic
+    public class Topic : Entity
     {
-        public int Id { get; set; }
         public string? Name { get; set; }
         public List<StudyMaterial> StudyMaterials { get; set; } = new List<StudyMaterial>();
         public List<Tag> Tags { get; set; } = new List<Tag>();
