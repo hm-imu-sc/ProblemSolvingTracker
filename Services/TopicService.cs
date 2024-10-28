@@ -28,11 +28,30 @@ namespace ProblemSolvingTracker.Services
 
                 var newTopic = new Topic
                 {
-                    Name = request.Topic.Name,
-                    StudyMaterials = _dbContext.StudyMaterials.Get(request.Topic.StudyMaterials.Select(sm => sm.Id).ToList()),
-                    Tags = _dbContext.Tags.Get(request.Topic.Tags.Select(t => t.Id).ToList())
+                    Name = request.Topic.Name   
                 };
                 await _dbContext.AddAsync(newTopic);
+
+                foreach (var studyMaterial in request.Topic.StudyMaterials)
+                {
+                    var newTopicSM = new TopicStudyMaterial
+                    {
+                        Topic = newTopic,
+                        StudyMaterial = _dbContext.StudyMaterials.First(sm => sm.Id == studyMaterial.Id)
+                    };
+                    await _dbContext.AddAsync(newTopicSM);
+                }
+
+                foreach (var tag in request.Topic.Tags)
+                {
+                    var newTopicTag = new TopicTag
+                    {
+                        Topic = newTopic,
+                        Tag = _dbContext.Tags.First(t => t.Id == tag.Id)
+                    };
+                    await _dbContext.AddAsync(newTopicTag);
+                }
+
                 await _dbContext.SaveChangesAsync();
 
                 return await Task.FromResult(new CreateTopicResponse
@@ -64,23 +83,23 @@ namespace ProblemSolvingTracker.Services
             try
             {
                 var topics = new RepeatedField<TopicItem>();
-                await _dbContext.Topics.ForEachAsync(t =>
+                await _dbContext.Topics.ForEachAsync(topic =>
                 {
                     var topicItem = new TopicItem
                     {
-                        Id = t.Id,
-                        Name = t.Name,
+                        Id = topic.Id,
+                        Name = topic.Name,
                     };
-                    topicItem.StudyMaterials.AddRange(t.StudyMaterials.Select(sm => new StudyMaterialItem
+                    topicItem.StudyMaterials.AddRange(_dbContext.TopicStudyMaterials.Where(tsm => tsm.Topic != null && tsm.Topic.Id == topic.Id).Select(tsm => new StudyMaterialItem
                     {
-                        Id = sm.Id,
-                        Title = sm.Title,
-                        Url = sm.Url
+                        Id = tsm.StudyMaterial.Id,
+                        Title = tsm.StudyMaterial.Title,
+                        Url = tsm.StudyMaterial.Url
                     }));
-                    topicItem.Tags.AddRange(t.Tags.Select(tag => new TagItem
+                    topicItem.Tags.AddRange(_dbContext.TopicTags.Where(tt => tt.Topic != null && tt.Topic.Id == topic.Id).Select(tt => new TagItem
                     {
-                        Id = tag.Id,
-                        Name = tag.Name
+                        Id = tt.Tag.Id,
+                        Name = tt.Tag.Name
                     }));
                     topics.Add(topicItem);
                 });
@@ -114,9 +133,16 @@ namespace ProblemSolvingTracker.Services
             {
                 if (_dbContext.Topics.Contains(request.Id))
                 {
-                    var studyMateriaToRemove = _dbContext.Topics.Get(request.Id);
-                    _dbContext.Remove(studyMateriaToRemove);
+                    var topicToRemove = _dbContext.Topics.Get(request.Id);
+                    var topicStudyMaterialsToRemove = _dbContext.TopicStudyMaterials.Where(tsm => tsm.Topic != null && tsm.Topic.Id == topicToRemove.Id);
+                    var topicTagsToRemove = _dbContext.TopicTags.Where(tt => tt.Topic != null && tt.Topic.Id == topicToRemove.Id);
+
+                    _dbContext.RemoveRange(topicStudyMaterialsToRemove);
+                    _dbContext.RemoveRange(topicTagsToRemove);
+                    _dbContext.Remove(topicToRemove);
+
                     await _dbContext.SaveChangesAsync();
+
                     return await Task.FromResult(new DeleteTopicResponse { GeneralResponse = new GeneralResponse { IsSuccess = true } });
                 }
 
@@ -152,8 +178,65 @@ namespace ProblemSolvingTracker.Services
                 {
                     var topic = _dbContext.Topics.Get(request.Topic.Id);
                     topic.Name = request.Topic.Name;
-                    topic.StudyMaterials = _dbContext.StudyMaterials.Get(request.Topic.StudyMaterials.Select(sm => sm.Id).ToList());
-                    topic.Tags = _dbContext.Tags.Get(request.Topic.Tags.Select(sm => sm.Id).ToList());
+
+                    var studyMaterialToInsert = request.Topic.StudyMaterials
+                        .AsEnumerable()
+                        .Where(sm =>
+                        {
+                            return !_dbContext.TopicStudyMaterials
+                                .Where(tsm => tsm.Topic != null && tsm.Topic.Id == request.Topic.Id)
+                                .Select(tsm => tsm.StudyMaterial.Id)
+                                .Contains(sm.Id);
+                        })
+                        .Select(sm => new TopicStudyMaterial
+                        {
+                            Topic = topic,
+                            StudyMaterial = _dbContext.StudyMaterials.First(ssm => ssm.Id == sm.Id)
+                        })
+                        .ToList();
+
+                    var studyMaterialsToDelete = _dbContext.TopicStudyMaterials
+                        .AsEnumerable()
+                        .Where(tsm =>
+                        {
+                            return tsm.Topic.Id == topic.Id && !request.Topic.StudyMaterials
+                                .Select(sm => sm.Id)
+                                .Contains(tsm.StudyMaterial.Id);
+                        })
+                        .ToList();
+
+                    var tagsToInsert = request.Topic.Tags
+                        .AsEnumerable()
+                        .Where(t =>
+                        {
+                            return !_dbContext.TopicTags
+                                .Where(tt => tt.Topic != null && tt.Topic.Id == request.Topic.Id)
+                                .Select(tt => tt.Tag.Id)
+                                .Contains(t.Id);
+                        })
+                        .Select(sm => new TopicTag
+                        {
+                            Topic = topic,
+                            Tag = _dbContext.Tags.First(ssm => ssm.Id == sm.Id)
+                        })
+                        .ToList();
+
+                    var tagsToDelete = _dbContext.TopicTags
+                        .AsEnumerable()
+                        .Where(tt =>
+                        {
+                            return tt.Topic.Id == topic.Id && !request.Topic.Tags
+                                .Select(t => t.Id)
+                                .Contains(tt.Tag.Id);
+                        })
+                        .ToList();
+
+                    _dbContext.RemoveRange(studyMaterialsToDelete);
+                    _dbContext.RemoveRange(tagsToDelete);
+
+                    await _dbContext.AddRangeAsync(studyMaterialToInsert);
+                    await _dbContext.AddRangeAsync(tagsToInsert);
+
                     await _dbContext.SaveChangesAsync();
                 }
 
@@ -223,7 +306,7 @@ namespace ProblemSolvingTracker.Services
                 isValid = false;
                 message = "Topic name cannot be empty";
             }
-            else if (_dbContext.Topics.Any(t => !t.Name.IsNullOrEmpty() && t.Name.IsEqualTo(request.Topic.Name)))
+            else if (_dbContext.Topics.Where(t => t.Id != request.Topic.Id).ToList().Any(t => !t.Name.IsNullOrEmpty() && t.Name.IsEqualTo(request.Topic.Name)))
             {
                 isValid = false;
                 message = $"A topic already exists with name \"{request.Topic.Name}\"";

@@ -14,5 +14,7 @@ namespace ProblemSolvingTracker.DataManager
         public DbSet<Topic> Topics => Set<Topic>();
         public DbSet<Count> Counts => Set<Count>();
         public DbSet<StudyMaterial> StudyMaterials => Set<StudyMaterial>();
+        public DbSet<TopicStudyMaterial> TopicStudyMaterials => Set<TopicStudyMaterial>();
+        public DbSet<TopicTag> TopicTags => Set<TopicTag>();
     }
 }

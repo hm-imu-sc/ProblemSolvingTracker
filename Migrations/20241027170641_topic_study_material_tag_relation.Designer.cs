@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProblemSolvingTracker.DataManager;
 
@@ -10,9 +11,11 @@ using ProblemSolvingTracker.DataManager;
 namespace ProblemSolvingTracker.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    partial class MyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241027170641_topic_study_material_tag_relation")]
+    partial class topic_study_material_tag_relation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
@@ -84,83 +87,11 @@ namespace ProblemSolvingTracker.Migrations
                     b.ToTable("Topics");
                 });
 
-            modelBuilder.Entity("ProblemSolvingTracker.Models.TopicStudyMaterial", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("StudyMaterialId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("TopicId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StudyMaterialId");
-
-                    b.HasIndex("TopicId");
-
-                    b.ToTable("TopicStudyMaterials");
-                });
-
-            modelBuilder.Entity("ProblemSolvingTracker.Models.TopicTag", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("TagId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("TopicId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TagId");
-
-                    b.HasIndex("TopicId");
-
-                    b.ToTable("TopicTags");
-                });
-
             modelBuilder.Entity("ProblemSolvingTracker.Models.Count", b =>
                 {
                     b.HasOne("ProblemSolvingTracker.Models.Topic", "Topic")
                         .WithMany()
                         .HasForeignKey("TopicId");
-
-                    b.Navigation("Topic");
-                });
-
-            modelBuilder.Entity("ProblemSolvingTracker.Models.TopicStudyMaterial", b =>
-                {
-                    b.HasOne("ProblemSolvingTracker.Models.StudyMaterial", "StudyMaterial")
-                        .WithMany()
-                        .HasForeignKey("StudyMaterialId");
-
-                    b.HasOne("ProblemSolvingTracker.Models.Topic", "Topic")
-                        .WithMany()
-                        .HasForeignKey("TopicId");
-
-                    b.Navigation("StudyMaterial");
-
-                    b.Navigation("Topic");
-                });
-
-            modelBuilder.Entity("ProblemSolvingTracker.Models.TopicTag", b =>
-                {
-                    b.HasOne("ProblemSolvingTracker.Models.Tag", "Tag")
-                        .WithMany()
-                        .HasForeignKey("TagId");
-
-                    b.HasOne("ProblemSolvingTracker.Models.Topic", "Topic")
-                        .WithMany()
-                        .HasForeignKey("TopicId");
-
-                    b.Navigation("Tag");
 
                     b.Navigation("Topic");
                 });
